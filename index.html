@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="反诈健身房：三个真实骗局剧本，六轮对话选择，AI 复盘你的每一次决定。免费、免登录、约 3 分钟。">
+  <meta property="og:title" content="反诈健身房 · 3 分钟练出防骗直觉">
+  <meta property="og:description" content="三个真实骗局剧本，六轮对话选择，AI 复盘你的每一次决定。免费、免登录。">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <title>反诈健身房 · 3 分钟练出防骗直觉</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <main id="screen-home" class="screen active" data-screen="home">
+      <header class="hero">
+        <div class="brand"><span class="brand-mark">反</span><span>反诈健身房</span></div>
+        <p class="eyebrow">AI 青年行 · 2026 高校好事计划</p>
+        <h1>3 分钟，练出<br><em>防骗直觉</em></h1>
+        <p class="lede">你不是在听讲座，是在跟骗子过招。三个剧本、六轮对话，每一步都由你决定。</p>
+        <div class="hero-actions">
+          <button id="start-btn" class="btn btn-primary" type="button">开始训练 <span aria-hidden="true">→</span></button>
+          <a class="btn btn-ghost" href="#how">先看看怎么玩</a>
+        </div>
+        <ul id="home-stats" class="stats" aria-label="训练数据"></ul>
+      </header>
+      <section class="section" id="scenarios">
+        <div class="section-head"><h2>选一个剧本</h2><span>全部免费 · 无需登录</span></div>
+        <div id="scenario-cards" class="scenario-grid"></div>
+      </section>
+      <section class="section how" id="how">
+        <h2>为什么是“健身房”</h2>
+        <div class="how-grid">
+          <div class="how-item"><span>01</span><h3>真骗子的话术</h3><p>免费体检、冒充公检法、快递理赔，都是真实高发剧本。</p></div>
+          <div class="how-item"><span>02</span><h3>你来做决定</h3><p>每轮 2—3 个选择，没有标准答案提示，选完才知道后果。</p></div>
+          <div class="how-item"><span>03</span><h3>AI 帮你复盘</h3><p>报告指出你最容易松口的那一步，并给出下一次的应对话术。</p></div>
+        </div>
+      </section>
+      <section class="section trust">
+        <h2>我们不做的事</h2>
+        <ul class="trust-list">
+          <li>不收集手机号、身份证、银行卡</li>
+          <li>不要求登录，不下载 App</li>
+          <li>所有对话都是模拟，不会真的转账</li>
+        </ul>
+        <p class="fine">遇到真实诈骗，请立即拨打 96110 或 110。</p>
+      </section>
+      <footer class="footer">
+        <p>反诈健身房 · 中国光华科技基金会“AI 青年行”参赛作品</p>
+        <p><a href="privacy.html">隐私说明</a> · <a href="#how">玩法说明</a></p>
+      </footer>
+    </main>
+
+    <main id="screen-game" class="screen" data-screen="game">
+      <header class="game-bar">
+        <button id="back-btn" class="icon-btn" type="button" aria-label="返回首页">←</button>
+        <div class="game-persona">
+          <span id="persona-avatar" class="avatar" aria-hidden="true">🧑‍⚕️</span>
+          <div class="persona-meta"><strong id="persona-name">正在载入</strong><span id="round-label">第 1 / 6 轮</span></div>
+        </div>
+        <span class="live-dot">模拟对话</span>
+      </header>
+      <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+      <section id="chat" class="chat" aria-live="polite"></section>
+      <section id="choices" class="choices" aria-label="你的选择"></section>
+      <p class="game-tip">选一个你认为最稳妥的回应。没有时间限制。</p>
+    </main>
+
+    <main id="screen-report" class="screen" data-screen="report">
+      <header class="report-topbar">
+        <button id="report-home-btn" class="icon-btn" type="button" aria-label="返回首页">←</button>
+        <span>训练报告</span>
+        <button id="share-btn" class="icon-btn" type="button" aria-label="分享报告">↗</button>
+      </header>
+      <div class="report-scroll">
+        <section class="report-hero">
+          <p id="report-scenario" class="report-scenario">—</p>
+          <div class="score-ring">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+              <circle id="ring-fg" class="ring-fg" cx="60" cy="60" r="54" transform="rotate(-90 60 60)"></circle>
+            </svg>
+            <div class="score-center"><strong id="score-num">0</strong><span>分</span></div>
+          </div>
+          <p id="risk-label" class="risk-label">—</p>
+        </section>
+        <p id="report-summary" class="report-summary"></p>
+        <div id="report-rounds" class="round-list"></div>
+        <section class="report-section"><h2>骗子用了这些招</h2><div id="tactics" class="tag-list"></div></section>
+        <section class="report-section"><h2>你最该回看的三步</h2><div id="key-choices" class="key-list"></div></section>
+        <section class="report-section"><h2>下次就这样说</h2><ul id="advice" class="advice-list"></ul></section>
+        <section class="report-section"><h2>随身清单</h2><div id="checklist" class="checklist"></div></section>
+        <section class="report-section coach">
+          <h2>问 AI 教练</h2>
+          <p class="coach-hint">针对这次训练，问一个具体问题。不要输入真实姓名、电话、银行卡。</p>
+          <div id="coach-chips" class="chips"></div>
+          <div class="coach-row">
+            <input id="coach-input" class="coach-input" type="text" maxlength="120" placeholder="例如：他让我开屏幕共享，我该怎么回？" autocomplete="off">
+            <button id="coach-send" class="btn btn-primary" type="button">发送</button>
+          </div>
+          <div id="coach-answer" class="coach-answer" aria-live="polite"></div>
+        </section>
+        <div class="report-actions">
+          <button id="restart-btn" class="btn btn-primary" type="button">再练一次</button>
+          <button id="home-btn" class="btn btn-ghost" type="button">换一个剧本</button>
+        </div>
+        <p class="fine">本报告由模拟对话生成，仅用于防骗练习，不构成法律或投资建议。</p>
+      </div>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script src="scenarios.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
