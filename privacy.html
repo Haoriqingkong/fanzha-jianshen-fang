@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>隐私说明 · 反诈健身房</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    body { margin: 0; background: #e9eef5; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.8; }
+    main { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #f8fafc; padding: 22px 20px 40px; box-sizing: border-box; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    h2 { font-size: 15px; margin: 22px 0 6px; }
+    p, li { font-size: 13px; color: #334155; }
+    .muted { color: #64748b; font-size: 11px; }
+    a { color: #0f766e; }
+    .back { display: inline-block; margin-top: 24px; font-weight: 700; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>隐私说明</h1>
+    <p class="muted">反诈健身房 · 更新于 2026 年 11 月 14 日</p>
+
+    <p>这是一个免费、免登录的防骗练习工具。我们尽量只拿运行所必需的信息，不收集你的真实身份。</p>
+
+    <h2>1. 我们不收集什么</h2>
+    <ul>
+      <li>不收集姓名、手机号、身份证、银行卡、验证码。</li>
+      <li>不需要注册账号，不读取通讯录、相册、定位。</li>
+      <li>不要求你输入任何真实转账信息。</li>
+    </ul>
+
+    <h2>2. 存在你浏览器里的数据</h2>
+    <p>训练完成次数、最近一次分数、清单勾选状态会保存在浏览器的 localStorage 中，键名为 fg_completed 和 fg_checklist。它们只在你自己的设备上，清除浏览器数据即可删除。</p>
+
+    <h2>3. 匿名事件统计</h2>
+    <p>开始训练、完成一轮、完成剧本、分享、向教练提问时，页面会向 /api/event 发送一条匿名事件，包含随机会话 ID、剧本 ID、分数、轮次、时间，以及提问的字数（不包含提问正文）。这些数据用于了解有多少人完成训练、卡在哪一关，不会用于广告画像。</p>
+    <p>如果部署方配置了 FEISHU_WEBHOOK_URL 或 EVENT_WEBHOOK_URL，上述事件会转发到对应的群机器人或自建服务；未配置时只接收、不保存。</p>
+
+    <h2>4. AI 教练</h2>
+    <p>向 AI 教练提问时，问题正文、剧本标题、分数、风险等级和最近几轮的选择会发送到部署方配置的模型服务，用于生成回答。请不要输入真实姓名、电话、身份证、银行卡或验证码。未配置模型密钥时，回答由本地模板生成，不会外发。</p>
+
+    <h2>5. 第三方</h2>
+    <p>页面托管在 Vercel；如启用 AI 教练，会调用部署方选择的模型服务商。除此之外，不接入广告或用户追踪 SDK。</p>
+
+    <h2>6. 未成年人</h2>
+    <p>建议在监护人指导下使用。遇到真实诈骗，请立即拨打 96110 或 110。</p>
+
+    <h2>7. 联系</h2>
+    <p>如对数据处理有疑问，可通过作品申报页联系团队。我们会在核实后处理。</p>
+
+    <a class="back" href="index.html">← 返回反诈健身房</a>
+  </main>
+</body>
+</html>
