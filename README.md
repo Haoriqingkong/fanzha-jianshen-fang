@@ -4,6 +4,14 @@
 
 参赛：AI 青年行 · 2026 高校好事计划（中国光华科技基金会主办）。
 
+## 在线体验
+
+https://fanzha-jianshen-fang-2026.netlify.app/
+
+Netlify 正式版：三个剧本、报告、清单、真 AI 教练、匿名事件都能用。AI 由 Netlify Functions 2.0 + AI Gateway 调用，默认 `gpt-4.1-mini`；网关失败时自动走本地模板。
+
+备用静态版：https://haoriqingkong.github.io/fanzha-jianshen-fang/ （没有 `/api`，教练走本地模板，事件不记录）。
+
 ## 目录
 
     产品/
@@ -13,9 +21,12 @@
       app.js            流程、计分、报告、教练、埋点
       privacy.html      隐私说明
       favicon.svg
-      vercel.json
-      api/coach.js      AI 教练（OpenAI 兼容接口，带本地降级）
-      api/event.js      匿名事件转发（飞书群机器人 / 自建 webhook）
+      netlify.toml      Netlify 静态发布 + Functions 配置
+      netlify/functions/coach.mts   AI 教练（Functions 2.0 + AI Gateway）
+      netlify/functions/event.mts   匿名事件（白名单字段）
+      api/coach.js      Vercel 旧版，保留作海外备选
+      api/event.js      Vercel 旧版，保留作海外备选
+      vercel.json       Vercel 旧配置
 
 ## 本地预览
 
@@ -26,32 +37,36 @@
 
 打开 http://localhost:8080 。此时 /api/coach 和 /api/event 不存在，教练会自动使用本地模板，事件静默失败，不影响训练。
 
-如果要连 API 一起调试，在 产品 目录使用 Vercel CLI：
+如果要连 Functions 一起调试，安装 Netlify CLI 后：
 
     cd 产品
-    npx vercel dev
+    netlify dev
 
-## 部署到 Vercel
+需要先 `netlify login` 并 `netlify link` 到站点。AI Gateway 变量只在 Netlify 部署环境注入，本地没有时会走 fallback。
 
-1. 把整个仓库推到 GitHub。
-2. 在 Vercel 新建项目，导入仓库。
-3. Root Directory 选择 产品。
-4. Framework Preset 选 Other；Build Command 留空；Output Directory 填 .。
-5. 在 Settings → Environment Variables 配置下面的变量，然后 Deploy。
-6. 部署完成后用无痕窗口打开 https://你的项目.vercel.app ，完整走一遍三个剧本。
+## 部署到 Netlify（当前线上方式）
 
-### 环境变量
+当前线上用 CLI 部署：静态文件先集中到 `_deploy`，再和 `netlify/functions` 一起上传。
 
-AI 教练（可选；不配也能用本地模板）：
+    cd 产品
+    mkdir -p _deploy
+    cp index.html app.js styles.css scenarios.js favicon.svg privacy.html _deploy/
+    netlify deploy --prod --dir=_deploy --functions=netlify/functions --no-build
 
-    AI_API_KEY       模型服务密钥
-    AI_BASE_URL      OpenAI 兼容地址，例如 https://api.openai.com/v1 或 https://api.deepseek.com/v1
-    AI_MODEL         模型名，例如 gpt-4o-mini 或 deepseek-chat
+首次使用先 `netlify login`，在站点目录执行 `netlify link` 选择 `fanzha-jianshen-fang-2026`。部署后用无痕窗口打开站点根路径，完整走一遍三个剧本，并问 AI 教练一个剧本外的问题。
 
-事件统计（可选；不配则只接收 204，不存储）：
+不要提交 `_deploy`、`.netlify`、截图等临时文件（`.gitignore` 已排除）。
+
+### AI Gateway
+
+`coach.mts` 读取 Netlify 自动注入的 `OPENAI_BASE_URL` 和 `OPENAI_API_KEY`，不需要手动配模型 key。可选 `AI_MODEL` 覆盖默认模型；模型顺序为 `AI_MODEL` → `gpt-4.1-mini` → `gpt-4o-mini` → `gpt-5-mini`，全部失败返回 `source:"fallback"`。
+
+### 可选环境变量
 
     FEISHU_WEBHOOK_URL   飞书群自定义机器人 webhook
     EVENT_WEBHOOK_URL    任意接收 JSON 的 webhook；与飞书二选一
+
+事件默认只写 Netlify Functions 日志，不接数据库。
 
 ## 接口
 
@@ -72,11 +87,11 @@ POST /api/coach
 
     { "answer": "……", "source": "ai" }
 
-没有密钥、上游超时或报错时返回 source 为 fallback 的本地模板回答。
+网关未配置、上游超时或报错时返回 source 为 fallback 的本地模板回答。
 
 POST /api/event
 
-请求字段：event、sessionId、ts、scenarioId、score、round、rounds、questionLength。接口只保留白名单字段，不接收问题正文，转发到飞书或自建 webhook 后返回 204。
+请求字段：event、sessionId、ts、scenarioId、score、round、rounds、questionLength。接口只保留白名单字段，不接收问题正文；写 Netlify Functions 日志，可选转发飞书或自建 webhook，始终返回 204。
 
 ## 加一个剧本
 
@@ -104,7 +119,7 @@ POST /api/event
 - 不收集姓名、手机号、身份证、银行卡、验证码。
 - 本地只存 fg_completed（完成次数/分数/时间）和 fg_checklist（清单勾选）。
 - 事件统计只发随机会话 ID、剧本 ID、分数、轮次、时间、提问字数，不含提问正文。
-- AI 教练会把问题正文、剧本标题、分数、风险和最近选择发给模型服务；未配置密钥时不外发。
+- AI 教练会把问题正文、剧本标题、分数、风险和最近选择发给模型服务；网关不可用时不外发，走本地模板。
 - 详见 privacy.html。
 
 ## 上线前检查
@@ -114,8 +129,8 @@ POST /api/event
 - 手机宽度 360—430px 下不横向滚动，选项可点。
 - 无痕窗口打开不需要登录；Q8 链接可直接体验。
 - 真实诈骗提示可见：96110 / 110。
-- 如果配了 AI key，问一个预设问题确认返回 source 为 ai；没有 key 时确认走 fallback 不报错。
-- 如果配了飞书 webhook，完成一次训练确认群里收到事件。
+- 问一个剧本外的问题（如“游戏账号被骗怎么办”），确认返回 source 为 ai；断网/网关失败时确认走 fallback 不报错。
+- 如果配了飞书 webhook，完成一次训练确认群里收到事件；没配时确认 Functions 日志有 complete。
 
 ## 说明
 
