@@ -1,6 +1,10 @@
-_*.png
+_*
+.npm-cache/
 .DS_Store
 Thumbs.db
 .vercel
 node_modules
 *.log
+
+# Local Netlify folder
+.netlify
